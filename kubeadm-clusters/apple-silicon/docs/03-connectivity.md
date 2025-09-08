@@ -17,7 +17,7 @@ Generate Key Pair on `controlplane` node
 [//]: # (host:controlplane)
 
 ```bash
-ssh-keygen
+ssh-keygen -t rsa -b 4096
 ```
 
 Leave all settings to default (just press ENTER at any questions).
@@ -26,6 +26,9 @@ Copy the key to the other hosts. For this step please enter `ubuntu` where a pas
 
 The option `-o StrictHostKeyChecking=no` tells it not to ask if you want to connect to a previously unknown host. Not best practice in the real world, but speeds things up here.
 
+```bash
+ssh-copy-id -o StrictHostKeyChecking=no ubuntu@controlplane
+```
 ```bash
 ssh-copy-id -o StrictHostKeyChecking=no ubuntu@node01
 ```

@@ -38,7 +38,7 @@ fi
 NUM_WORKER_NODES=2
 MEM_GB=$(( $(sysctl hw.memsize | cut -d ' ' -f 2) /  1073741824 ))
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )/scripts
-VM_MEM_GB=3G
+VM_MEM_GB=8G
 
 if [ $MEM_GB -lt 8 ]
 then
@@ -108,7 +108,7 @@ do
 
 
     echo -e "${BLUE}Launching ${node}${NC}"
-    if ! multipass launch $bridge_arg --disk 5G --memory $VM_MEM_GB --cpus 2 --name $node jammy 2>/dev/null
+    if ! multipass launch $bridge_arg --disk 50G --memory $VM_MEM_GB --cpus 2 --name $node jammy 2>/dev/null
     then
         # Did it actually launch?
         sleep 1

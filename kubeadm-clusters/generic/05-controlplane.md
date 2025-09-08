@@ -9,8 +9,8 @@ On the `controlplane` node
 1.  Set shell variables for the pod and network network CIDRs. The API server advertise address is using the predefined variable described in the [previous section](./04-node-setup.md). Note that with bridged mode virtual machines (the default for this installation) it is important that neither of the following IP ranges overlap your home network which for nearly all broadband router default configurations is `192.168.0.0/24`
 
     ```bash
-    POD_CIDR=10.244.0.0/16
-    SERVICE_CIDR=10.96.0.0/16
+POD_CIDR=10.244.0.0/16
+SERVICE_CIDR=10.96.0.0/16
     ```
 
 1.  Start controlplane
@@ -18,7 +18,7 @@ On the `controlplane` node
     Here we are using arguments to `kubeadm` to ensure that it uses the networks and IP address we want rather than choosing defaults which may be incorrect.
 
     ```bash
-    sudo kubeadm init --pod-network-cidr $POD_CIDR --service-cidr $SERVICE_CIDR --apiserver-advertise-address $PRIMARY_IP
+sudo kubeadm init --pod-network-cidr $POD_CIDR --service-cidr $SERVICE_CIDR --apiserver-advertise-address $PRIMARY_IP
     ```
 
 [//]: # (command:sleep 10)
@@ -31,17 +31,17 @@ On the `controlplane` node
 
         ```bash
         {
-            mkdir ~/.kube
-            sudo cp /etc/kubernetes/admin.conf ~/.kube/config
-            sudo chown $(id -u):$(id -g) ~/.kube/config
-            chmod 600 ~/.kube/config
+mkdir ~/.kube
+sudo cp /etc/kubernetes/admin.conf ~/.kube/config
+sudo chown $(id -u):$(id -g) ~/.kube/config
+chmod 600 ~/.kube/config
         }
         ```
 
     1.  Verify
 
         ```bash
-        kubectl get pods -n kube-system
+kubectl get pods -n kube-system
         ```
 
 1.  Install Calico CNI for cluster networking
@@ -51,7 +51,7 @@ On the `controlplane` node
     1. Install the Tigera operator and custom resource definitions.
 
         ```bash
-        kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.30.1/manifests/tigera-operator.yaml
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.30.1/manifests/tigera-operator.yaml
         ```
 
     1. Install Calico by creating the necessary custom resources. If using bridge networking for your virtual machines which is the default, we are going to have to make a modification to these custom resources to agree with the POD_CIDR we set above, or else the pod network will overlap your home network and the cluster won't work.
@@ -59,25 +59,25 @@ On the `controlplane` node
         1. Download the custom resource manifest
 
             ```bash
-            curl -LO https://raw.githubusercontent.com/projectcalico/calico/v3.30.1/manifests/custom-resources.yaml
+curl -LO https://raw.githubusercontent.com/projectcalico/calico/v3.30.1/manifests/custom-resources.yaml
             ```
 
         1. Use `sed` to change the ipPool network in the manifest from the default of `192.168.0.0/16` to the value of `POD_IP` set above. You could do it by editing with `vi` but `sed` is faster.
 
             ```bash
-            sed -i "s#192.168.0.0/16#$POD_CIDR#" custom-resources.yaml
+sed -i "s#192.168.0.0/16#$POD_CIDR#" custom-resources.yaml
             ```
 
         1. Apply the edited manifest
 
             ```bash
-            kubectl apply -f custom-resources.yaml
+kubectl apply -f custom-resources.yaml
             ```
 
     It will take a minute or two for all the calico resources to be up and running. You can monitor the progress with the following command
 
     ```
-    watch kubectl get tigerastatus
+watch kubectl get tigerastatus
     ```
 
     Wait until all items in the list have a `True` status for available, then press `CTRL-C` to exit the `watch` command.

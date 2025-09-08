@@ -58,9 +58,9 @@ If you do decide to change any of these, please treat as personal preference and
 
 To set up as per the image above, do the following in iterm2
 1. Right click and select split pane horizontally
-1. Do this again to create the third pane (if building 2 workers)
-1. In each pane, connect to a different node with `Multipass shell`
-1. From the `Session` menu at the top, select `Broadcast` -> `Broadcast imput to all panes`. The small icon at the top right of each pane indicates broadcast mode is enabled.
+2. Do this again to create the third pane (if building 2 workers)
+3. In each pane, connect to a different node with `Multipass shell`
+4. From the `Session` menu at the top, select `Broadcast` -> `Broadcast imput to all panes`. The small icon at the top right of each pane indicates broadcast mode is enabled.
 
 Input typed or pased to one command prompt will be echoed to the others. Remember to turn off broadcast when you have finished a section that applies to all nodes.
 
