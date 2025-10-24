@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/bash
 # WSL-compatible multipass cluster setup script
 
 ARG=$1
@@ -25,7 +25,9 @@ if ! command -v multipass >/dev/null; then
 fi
 
 NUM_WORKER_NODES=2
-MEM_GB=$(( $(free -m | awk '/^Mem:/{print $2}') / 1024 ))
+# MEM_GB=$(( $(free -m | awk '/^Mem:/{print $2}') / 1024 ))
+MEM_GB=$(wmic computersystem get TotalPhysicalMemory | awk 'NR==2 {printf "%.0f", $1/1024/1024/1024}')
+
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &>/dev/null && pwd )/scripts"
 VM_MEM_GB=8G
 
@@ -81,7 +83,7 @@ for node in controlplane $workers; do
     fi
 
     echo -e "${BLUE}Launching ${node}${NC}"
-    if ! multipass launch $bridge_arg --disk 5G --memory "$VM_MEM_GB" --cpus 2 --name "$node" jammy; then
+    if ! multipass launch $bridge_arg --disk 5G --memory "$VM_MEM_GB" --cpus 2 --name "$node" noble; then
         sleep 1
         if [ "$(multipass list --format json | jq -r --arg no "$node" '.list[] | select (.name == $no) | .state')" != "Running" ]; then
             echo -e "${RED}$node failed to start!${NC}"
